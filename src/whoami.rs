@@ -1,4 +1,4 @@
-use crate::ExitCode;
+use crate::{ExitCode, EXIT_CODE_SUCCESS};
 
 static DNS_NAME: &str = "https://icanhazip.com/";
 
@@ -8,7 +8,7 @@ pub(super) fn run() -> ExitCode {
             match response.text() {
                 Ok(text) => {
                     print!("{text}");
-                    return 0
+                    return EXIT_CODE_SUCCESS
                 },
                 Err(_) => {
                     print!("Invalid HTTP response");
