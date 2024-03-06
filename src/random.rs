@@ -1,5 +1,3 @@
-use std::io::Write;
-
 use clap::{Parser, Subcommand};
 use crate::{ExitCode, EXIT_CODE_SUCCESS};
 
@@ -9,11 +7,22 @@ pub(super) fn run(args: CommandArgs) -> ExitCode {
     let mut rng = fastrand::Rng::default();
 
     match args.target {
-        RandomTarget::Integer { min, max } => {
+        RandomTarget::Boolean => {
+            let val = rng.bool();
+            println!("{val}");
+        },
+
+        RandomTarget::Integer { hexadecimal, min, max } => {
             let min = min.unwrap_or(i128::MIN);
             let max = max.unwrap_or(i128::MAX);
-            let val = rng.i128(0..=max);
-            println!("{val}");
+            let val = rng.i128(min..=max);
+
+            // Print to console
+            if hexadecimal {
+                println!("0x{val:X}");
+            } else {
+                println!("{val}");
+            }
         },
 
         RandomTarget::Digits { length, base } => {
@@ -43,7 +52,7 @@ pub(super) fn run(args: CommandArgs) -> ExitCode {
 
             // Print the string to stdout
             println!("{string}");
-        }
+        },
     }
 
     EXIT_CODE_SUCCESS
@@ -58,8 +67,15 @@ pub(super) struct CommandArgs {
 
 #[derive(Subcommand, Debug)]
 enum RandomTarget {
+    /// Generates a random boolean value.
+    Boolean,
+
     /// Generates a random signed integer.
     Integer {
+        /// Display the number in hexadecimal.
+        #[arg(long = "hex", default_value_t=false)]
+        hexadecimal: bool,
+
         /// The maximum value that can be returned.
         #[arg(long)]
         min: Option<i128>,
