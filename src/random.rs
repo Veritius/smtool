@@ -1,9 +1,9 @@
-use clap::{Parser, Subcommand};
-use crate::{ExitCode, EXIT_CODE_SUCCESS};
+use clap::{Args, Subcommand};
+use crate::{ExitCode, OutputConfig, EXIT_CODE_SUCCESS};
 
 const EXIT_CODE_BAD_BASE: ExitCode = -2;
 
-pub(super) fn run(args: CommandArgs) -> ExitCode {
+pub(super) fn run(_config: OutputConfig, args: CommandArgs) -> ExitCode {
     let mut rng = fastrand::Rng::default();
 
     match args.target {
@@ -58,7 +58,7 @@ pub(super) fn run(args: CommandArgs) -> ExitCode {
     EXIT_CODE_SUCCESS
 }
 
-#[derive(Parser, Debug)]
+#[derive(Args, Debug)]
 #[command(version)]
 pub(super) struct CommandArgs {
     #[command(subcommand)]

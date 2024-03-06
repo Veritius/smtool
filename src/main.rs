@@ -13,10 +13,15 @@ fn main() {
     // Parse command line arguments
     let args = RootArgs::parse();
 
+    // Verbose information
+    let config = OutputConfig {
+        verbose: args.verbose,
+    };
+
     // Let the subcommand take it from here
     let code = match args.subcommand {
-        Subcommands::FfmpegConvertFolder(args) => ffmpeg_convert_folder::run(args),
-        Subcommands::Random(args) => random::run(args),
+        Subcommands::FfmpegConvertFolder(args) => ffmpeg_convert_folder::run(config, args),
+        Subcommands::Random(args) => random::run(config, args),
 
         #[cfg(feature="cmds_web")]
         Subcommands::WhoAmI => whoami::run(),
@@ -33,6 +38,10 @@ struct RootArgs {
 
     #[command(subcommand)]
     pub subcommand: Subcommands,
+}
+
+struct OutputConfig {
+    verbose: bool,
 }
 
 #[derive(Subcommand)]

@@ -1,8 +1,8 @@
 use std::{collections::VecDeque, ffi::{OsStr, OsString}, iter::repeat_with, path::{Path, PathBuf}, process::{Command, ExitStatus}, time::Instant};
-use clap::Parser;
-use crate::{ExitCode, EXIT_CODE_SUCCESS};
+use clap::Args;
+use crate::{ExitCode, OutputConfig, EXIT_CODE_SUCCESS};
 
-#[derive(Parser, Debug)]
+#[derive(Args, Debug)]
 #[command(version)]
 pub(super) struct CommandArgs {
     /// The directory to search for files in.
@@ -23,7 +23,7 @@ pub(super) struct CommandArgs {
     pub access_hidden: bool,
 }
 
-pub(super) fn run(args: CommandArgs) -> ExitCode {
+pub(super) fn run(config: OutputConfig, args: CommandArgs) -> ExitCode {
     // Check FFmpeg exists
     let mut command = Command::new("ffmpeg");
     command.arg("-version");
@@ -123,12 +123,14 @@ pub(super) fn run(args: CommandArgs) -> ExitCode {
             &output_path
         );
 
-        // Write the outcome to stdout
-        println!("{}", display_conversion_outcome(
-            &file.path,
-            &output_path,
-            &outcome
-        ));
+        // Write the outcome to stdout if verbose is on
+        if config.verbose {
+            println!("{}", display_conversion_outcome(
+                &file.path,
+                &output_path,
+                &outcome
+            ));
+        }
     }
 
     // Log how long we've spent on this to the console
