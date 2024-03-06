@@ -10,9 +10,6 @@ pub type ExitCode = i32;
 pub const EXIT_CODE_SUCCESS: ExitCode = 0;
 
 fn main() {
-    // Create the logger to output logs to stderr
-    env_logger::builder().init();
-
     // Parse command line arguments
     let args = RootArgs::parse();
 
